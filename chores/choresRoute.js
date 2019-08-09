@@ -21,7 +21,8 @@ router.get('/:id', (req, res) => {
 
 	if(results.length === 0) {
 		res.status(404).json({message: "Chore ID does not exist"});
-	} else {
+	}
+	else {
 		res.status(200).json(results);
 	}
 })
@@ -30,25 +31,30 @@ router.get('/:id', (req, res) => {
 // POST
 router.post('/', (req, res) => {
 	// increments the new chores id before adding to database
-	// prepend new id to req.body
 	let lastChore = choresDb.chores.length - 1;
-	// let lastChoreId = choresDb.chores[lastChore].id;
 	let newChoreId = choresDb.chores[lastChore].id + 1
+
+	// prepend new id to req.body
 	req.body = Object.assign({id: newChoreId}, req.body);
-	// defaults `completed` property to false
+
+	// defaults `completed` property value to false
 	if(!req.body.completed) {
 		req.body.completed = false;
 	}
 
 	// if the user didn't include a description, return error
-	// if the user didn't include ID for person the chore is being assigned to or if the ID is a string, return error
+	// if the user didn't include ID for person the chore is being assigned to, return error
+	// if the user ID doesn't exist, return error
 	if(!req.body.description) {
 		return res.status(400).json({message: "Must include chore description"});
-	} else if(!req.body.assignedTo) {
+	}
+	else if(!req.body.assignedTo) {
 		return res.status(400).json({message: "Must include assigned person's ID"});
-	} else if(!peopleDb.people.find(person => person.id === req.body.assignedTo)) {
+	}
+	else if(!peopleDb.people.find(person => person.id === Number(req.body.assignedTo))) {
 		return res.status(400).json({message: "The person you assigned the chore to doesn't exist"});
-	} else {
+	}
+	else {
 		choresDb.chores.push(req.body);
 		res.status(201).json({message: "Chore created successfully"});
 	}
@@ -57,7 +63,22 @@ router.post('/', (req, res) => {
 
 // DELETE
 router.delete('/:id', (req, res) => {
-	// let results = choresDb.chores
+	// checks to see if the chore exists based on the /:id provided in the URL
+	// if a chore is found, store that chore object in variable, if not found, then `undefined` is stored
+	const chore = choresDb.chores.find(chore => chore.id === Number(req.params.id));
+
+	// if falsey value (e.g. `undefined`) is stored in chore, return error
+	if(!chore) {
+		return res.status(404).json({message: "The provided chore ID does not exist"});
+	}
+	else {
+		// get index of associated chore object from choresDb.chores array
+		// remove chore object from choresDb.chores array
+		const choresIndex = choresDb.chores.findIndex(chore => chore.id === Number(req.params.id));
+		choresDb.chores.splice(choresIndex, 1);
+
+		res.status(200).json({message: "Chore deleted successfully"});
+	}
 });
 
 
