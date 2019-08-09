@@ -4,7 +4,8 @@
   "description": "In this challenge, create a web API to manage the following resources: `People` and `Chores`.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+		"api": "nodemon index.js",
+		"start": "node index.js"
   },
   "repository": {
     "type": "git",
