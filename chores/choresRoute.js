@@ -63,18 +63,16 @@ router.post('/', (req, res) => {
 
 // DELETE
 router.delete('/:id', (req, res) => {
-	// checks to see if the chore exists based on the /:id provided in the URL
-	// if a chore is found, store that chore object in variable, if not found, then `undefined` is stored
-	const chore = choresDb.chores.find(chore => chore.id === Number(req.params.id));
+	const chore = validateChoreId(choresDb.chores, req.params.id);
 
 	// if falsey value (e.g. `undefined`) is stored in chore, return error
 	if(!chore) {
 		return res.status(404).json({message: "The provided chore ID does not exist"});
 	}
 	else {
-		// get index of associated chore object from choresDb.chores array
+		const choresIndex = getChoresIndex(choresDb.chores, req.params.id);
+
 		// remove chore object from choresDb.chores array
-		const choresIndex = choresDb.chores.findIndex(chore => chore.id === Number(req.params.id));
 		choresDb.chores.splice(choresIndex, 1);
 
 		res.status(200).json({message: "Chore deleted successfully"});
@@ -83,5 +81,49 @@ router.delete('/:id', (req, res) => {
 
 
 // PUT
+router.put('/:id', (req, res) => {
+	const chore = validateChoreId(choresDb.chores, req.params.id);
+
+	// if falsey value (e.g. `undefined`) is stored in chore, return error
+	if(!chore) {
+		return res.status(404).json({message: "The provided chore ID does not exist"});
+	}
+	else {
+		const choresIndex = getChoresIndex(choresDb.chores, req.params.id);
+
+		// if 'completed' property is provided, it must be a boolean, if not, return error
+		if(req.body.completed) {
+			if(typeof req.body.completed !== "boolean") {
+				return res.status(400).json({message: "Completed property must be boolean"});
+			}
+		}
+
+		// if the assignedTo ID doesn't exist, return error
+		if(!peopleDb.people.find(person => person.id === Number(req.body.assignedTo))) {
+			return res.status(400).json({message: "The person you assigned the chore to doesn't exist"});
+		}
+
+		// update chore object within choresDb.chores array
+		choresDb.chores[choresIndex] = {
+			...choresDb.chores[choresIndex],
+			...req.body
+		};
+
+		res.status(200).json({message: "Chore updated successfully"});
+	}
+});
+
+
+// ** MIDDLEWARE (not really) **
+function validateChoreId(choresDb, requestId) {
+	// checks to see if the chore exists based on the /:id provided in the URL
+	// if a chore is found, return that chore object, if not found, then return `undefined`
+	return choresDb.find(chore => chore.id === Number(requestId));
+};
+
+function getChoresIndex(choresDb, requestId) {
+	// get index of associated chore object from choresDb.chores array
+	return choresDb.findIndex(chore => chore.id === Number(requestId));
+};
 
 module.exports = router;
