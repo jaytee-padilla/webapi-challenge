@@ -10,5 +10,7 @@ server.get('/', (req, res) => {
 // routes
 const choresRoute = require('./chores/choresRoute');
 server.use('/chores', choresRoute);
+const peopleRoute = require('./people/peopleRoute');
+server.use('/people', peopleRoute);
 
 module.exports = server;

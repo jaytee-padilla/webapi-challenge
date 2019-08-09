@@ -25,7 +25,22 @@ router.get('/:id', (req, res) => {
 	else {
 		res.status(200).json(results);
 	}
-})
+});
+
+// get specific person's list of chores
+router.get('/people/:id', (req, res) => {
+	const person = peopleDb.find(chore => chore.id === Number(req.params.id));
+	
+	// if person doesn't exist, return error
+	if(!person) {
+		return res.status(404).json({message: "That person's ID does not exist"});
+	}
+
+	// filter out all chores whose 'assignedTo' value doesn't match up with req.params.id
+	const chores = choresDb.chores.filter(chore => Number(chore.assignedTo) === Number(req.params.id));
+
+	res.status(200).json(chores)
+});
 
 
 // POST
@@ -51,7 +66,7 @@ router.post('/', (req, res) => {
 	else if(!req.body.assignedTo) {
 		return res.status(400).json({message: "Must include assigned person's ID"});
 	}
-	else if(!peopleDb.people.find(person => person.id === Number(req.body.assignedTo))) {
+	else if(!peopleDb.find(person => person.id === Number(req.body.assignedTo))) {
 		return res.status(400).json({message: "The person you assigned the chore to doesn't exist"});
 	}
 	else {
@@ -99,7 +114,7 @@ router.put('/:id', (req, res) => {
 		}
 
 		// if the assignedTo ID doesn't exist, return error
-		if(!peopleDb.people.find(person => person.id === Number(req.body.assignedTo))) {
+		if(!peopleDb.find(person => person.id === Number(req.body.assignedTo))) {
 			return res.status(400).json({message: "The person you assigned the chore to doesn't exist"});
 		}
 

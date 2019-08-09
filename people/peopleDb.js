@@ -1,4 +1,4 @@
-exports.people = [
+module.exports = [
 	{
 		id: 1,
 		name: "Leslie Knope"
