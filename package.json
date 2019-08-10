@@ -1,0 +1,27 @@
+{
+  "name": "webapi-challenge",
+  "version": "1.0.0",
+  "description": "In this challenge, create a web API to manage the following resources: `People` and `Chores`.",
+  "main": "index.js",
+  "scripts": {
+		"api": "nodemon index.js",
+		"start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaytee-padilla/webapi-challenge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaytee-padilla/webapi-challenge/issues"
+  },
+  "homepage": "https://github.com/jaytee-padilla/webapi-challenge#readme",
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
