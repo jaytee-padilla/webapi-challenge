@@ -11,7 +11,20 @@ const peopleDb = require('../people/peopleDb');
 // GET
 // get chores
 router.get('/', (req, res) => {
-	res.status(200).json(choresDb.chores);
+	// response will hold result of choresDb filtering
+	let response = [];
+	const reqQuery = req.query.completed;
+
+	// if reqQuery value equals true or false, then add any chores object whose 'completed' value matches the reqQuery to 'response' variable
+	if(reqQuery === "true" || reqQuery === "false") {
+		response = choresDb.chores.filter(chore => chore.completed.toString() === req.query.completed);
+	}
+
+	if(response.length > 0) {
+		return res.status(200).json(response);
+	} else {
+		return res.status(200).json(choresDb.chores);
+	}
 });
 
 // get specific chore by id

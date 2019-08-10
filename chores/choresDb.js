@@ -32,6 +32,6 @@ exports.chores = [
 		description: "Remind Chris to relax",
 		notes: "",
 		assignedTo: 2,
-		completed: false
+		completed: true
 	},
 ]
